@@ -29,7 +29,7 @@ app.get('/talker/:id', async (req, res) => {
   try {
     const manager = await utilFunc.getManager();
     const searchManager = manager.find(
-      (data) => data.id === parseInt(req.params.id)
+      (data) => data.id === parseInt(req.params.id, 10),
     );
 
     if (!searchManager) {
