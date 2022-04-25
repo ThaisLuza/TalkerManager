@@ -28,8 +28,9 @@ app.get('/talker', async (_req, res) => {
 app.get('/talker/:id', async (req, res) => {
   try {
     const manager = await utilFunc.getManager();
-    console.log(manager);
-    const searchManager = manager.find(({ id }) => id === req.params.id);
+    const searchManager = manager.find(
+      (data) => data.id === parseInt(req.params.id)
+    );
 
     if (!searchManager) {
       return res
