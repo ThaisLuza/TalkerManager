@@ -43,6 +43,19 @@ app.get('/talker/:id', async (req, res) => {
   }
 });
 
+app.post('/login', (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (email && password) {
+      console.log('caiu no if');
+    const token = utilFunc.getToken();
+    return res.status(200).json({ token }); 
+}
+  } catch (error) {
+    return res.status(500).end();
+  }
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
