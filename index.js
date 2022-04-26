@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const utilFunc = require('./utils');
+const { validateEmail, validatePassword } = require('./auth-middleware');
 
 const app = express();
 app.use(bodyParser.json());
@@ -43,11 +44,10 @@ app.get('/talker/:id', async (req, res) => {
   }
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', validateEmail, validatePassword, (req, res) => {
   try {
     const { email, password } = req.body;
     if (email && password) {
-      console.log('caiu no if');
     const token = utilFunc.getToken();
     return res.status(200).json({ token }); 
 }
