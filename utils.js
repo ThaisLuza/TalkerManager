@@ -8,9 +8,11 @@ async function getManager() {
   return JSON.parse(fileContent);
 }
 
+const setManager = async (newManager) => fs.writeFile('./talker.json', JSON.stringify(newManager));
+
 const getToken = () => {
   const token = crypto.randomBytes(8).toString('hex');
   return token;
 };
 
-module.exports = { getManager, getToken };
+module.exports = { getManager, setManager, getToken };

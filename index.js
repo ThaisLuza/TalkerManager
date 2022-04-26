@@ -1,7 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const utilFunc = require('./utils');
-const { validateEmail, validatePassword } = require('./auth-middleware');
+const {
+  validateEmail,
+  validatePassword,
+  validateAuth,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateRate,
+  validateWatchedAt,
+} = require('./auth-middleware');
 
 const app = express();
 app.use(bodyParser.json());
@@ -48,13 +57,42 @@ app.post('/login', validateEmail, validatePassword, (req, res) => {
   try {
     const { email, password } = req.body;
     if (email && password) {
-    const token = utilFunc.getToken();
-    return res.status(200).json({ token }); 
-}
+      const token = utilFunc.getToken();
+      return res.status(200).json({ token });
+    }
   } catch (error) {
     return res.status(500).end();
   }
 });
+
+app.post(
+  '/talker',
+  validateAuth,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateRate,
+  validateWatchedAt,
+  async (req, res) => {
+    try {
+      const { name, age, talk } = req.body;
+      const manager = await utilFunc.getManager();
+      const newManager = {
+        name,
+        age,
+        id: (manager.length + 1),
+        talk,
+      };
+      manager.push(newManager);
+
+      await utilFunc.setManager(manager);
+
+      return res.status(201).json(newManager);
+    } catch (error) {
+      return res.status(500).end();
+    }
+  },
+);
 
 app.listen(PORT, () => {
   console.log('Online');
