@@ -25,7 +25,7 @@ app.get('/', (_request, response) => {
 
 app.get('/talker', async (_req, res) => {
   try {
-    const manager = await utilFunc.getManager();
+    const manager = await utilFunc.getTalker();
     if (!manager) {
       return res.status(200).json([]);
     }
@@ -37,7 +37,7 @@ app.get('/talker', async (_req, res) => {
 
 app.get('/talker/:id', async (req, res) => {
   try {
-    const manager = await utilFunc.getManager();
+    const manager = await utilFunc.getTalker();
     const searchManager = manager.find(
       (data) => data.id === parseInt(req.params.id, 10),
     );
@@ -76,18 +76,49 @@ app.post(
   async (req, res) => {
     try {
       const { name, age, talk } = req.body;
-      const manager = await utilFunc.getManager();
+      const manager = await utilFunc.getTalker();
       const newManager = {
         name,
         age,
-        id: (manager.length + 1),
+        id: manager.length + 1,
         talk,
       };
       manager.push(newManager);
 
-      await utilFunc.setManager(manager);
+      await utilFunc.setTalker(manager);
 
       return res.status(201).json(newManager);
+    } catch (error) {
+      return res.status(500).end();
+    }
+  },
+);
+
+app.put(
+  '/talker/:id',
+  validateAuth,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+    
+  // eslint-disable-next-line max-lines-per-function
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, age, talk } = req.body;
+      const manager = await utilFunc.getTalker();
+      const searchId = manager.filter((data) => data.id === Number(id));
+      const editTalker = {
+        name,
+        age,
+        id: Number(id),
+        talk,
+      };
+      const newList = [...searchId, editTalker];
+      await utilFunc.setTalker(newList);
+      return res.status(200).json(editTalker);
     } catch (error) {
       return res.status(500).end();
     }
