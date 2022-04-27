@@ -102,8 +102,6 @@ app.put(
   validateTalk,
   validateWatchedAt,
   validateRate,
-    
-  // eslint-disable-next-line max-lines-per-function
   async (req, res) => {
     try {
       const { id } = req.params;
@@ -124,6 +122,19 @@ app.put(
     }
   },
 );
+
+app.delete('/talker/:id', validateAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const manager = await utilFunc.getTalker();
+    const searchId = manager.filter((data) => data.id !== Number(id));
+    
+    await utilFunc.setTalker(searchId);
+    return res.status(204).end();
+  } catch (error) {
+    return res.status(500).end();
+  }
+});
 
 app.listen(PORT, () => {
   console.log('Online');
