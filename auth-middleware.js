@@ -1,3 +1,4 @@
+// Requisito 4 e outras autenticações
 const regexEmail = /\S+@\S+\.\S+/;
 
 const validateEmail = (req, res, next) => {

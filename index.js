@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const utilFunc = require('./utils');
+const talkerRouter = require('./routes');
 const {
   validateEmail,
   validatePassword,
@@ -23,36 +24,23 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-app.get('/talker', async (_req, res) => {
+// Requisito 8
+app.get('/talker/search', validateAuth, async (req, res) => {
   try {
+    const { q } = req.query;
     const manager = await utilFunc.getTalker();
-    if (!manager) {
-      return res.status(200).json([]);
-    }
-    return res.status(200).json(manager);
+    const filteredArray = manager
+    .filter((data) => data.name.toUpperCase().includes(q.toUpperCase()));
+    res.status(200).json(filteredArray);
   } catch (error) {
     return res.status(500).end();
   }
-});
+  });
 
-app.get('/talker/:id', async (req, res) => {
-  try {
-    const manager = await utilFunc.getTalker();
-    const searchManager = manager.find(
-      (data) => data.id === parseInt(req.params.id, 10),
-    );
+// Requisito 1 e 2 com Router
+app.use('/talker', talkerRouter);
 
-    if (!searchManager) {
-      return res
-        .status(404)
-        .json({ message: 'Pessoa palestrante não encontrada' });
-    }
-    return res.status(200).json(searchManager);
-  } catch (error) {
-    return res.status(500).end();
-  }
-});
-
+// Requisito 3
 app.post('/login', validateEmail, validatePassword, (req, res) => {
   try {
     const { email, password } = req.body;
@@ -65,6 +53,7 @@ app.post('/login', validateEmail, validatePassword, (req, res) => {
   }
 });
 
+// Requisito 5
 app.post(
   '/talker',
   validateAuth,
@@ -94,6 +83,7 @@ app.post(
   },
 );
 
+// Requisito 6
 app.put(
   '/talker/:id',
   validateAuth,
@@ -123,6 +113,7 @@ app.put(
   },
 );
 
+// Requisito 7
 app.delete('/talker/:id', validateAuth, async (req, res) => {
   try {
     const { id } = req.params;

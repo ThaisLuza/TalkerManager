@@ -1,6 +1,5 @@
 const fs = require('fs/promises');
 const crypto = require('crypto');
-// Trecho de código crypto baseado nesse site: https://www.geeksforgeeks.org/node-js-crypto-randombytes-method/
 
 async function getTalker() {
   const fileContent = await fs
